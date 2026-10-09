@@ -1212,7 +1212,7 @@ def automatic_seo_urls_view(request):
     Returns an automatic, real-time structured list of all canonical SEO URLs
     across static pages and dynamic database models (blogs, devotionals, sermons, etc.).
     """
-    base_url = "https://www.clm.org.in"
+    base_url = "https://www.loveofcalvary.org"
     today_str = timezone.now().strftime("%Y-%m-%d")
 
     urls = [
@@ -1258,7 +1258,7 @@ def dynamic_sitemap_xml_view(request):
     Dynamically generates the XML Sitemap adhering to standard sitemap protocol 0.9
     and Google Image extension schemas. Automatically includes all published dynamic blog posts.
     """
-    base_url = "https://www.clm.org.in"
+    base_url = "https://www.loveofcalvary.org"
     today_str = timezone.now().strftime("%Y-%m-%d")
 
     xml_lines = [

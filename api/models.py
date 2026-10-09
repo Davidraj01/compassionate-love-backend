@@ -772,7 +772,7 @@ class PageSEO(models.Model):
                 'contact': 'contact',
             }
             rel_path = path_map.get(self.page_identifier, self.page_identifier)
-            self.canonical_url = f"https://www.clm.org.in/{rel_path}" if rel_path else "https://www.clm.org.in/"
+            self.canonical_url = f"https://www.loveofcalvary.org/{rel_path}" if rel_path else "https://www.loveofcalvary.org/"
 
         # 2. Automatic Open Graph Fallbacks
         if not self.og_title and self.meta_title:
