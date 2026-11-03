@@ -1,6 +1,13 @@
 # Compassionate Love of Calvary Ministries - Apache Backend Configuration
 
-# 1. Enable Rewrite Engine & Pass Authorization Header
+# 1. Phusion Passenger WSGI Activation (Crucial for cPanel / Apache)
+<IfModule mod_passenger.c>
+    PassengerEnabled On
+    PassengerAppType wsgi
+    PassengerStartupFile passenger_wsgi.py
+</IfModule>
+
+# 2. Enable Rewrite Engine & Pass Authorization Header
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -10,7 +17,7 @@
     RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 </IfModule>
 
-# 2. Apache Level CORS & Security Headers
+# 3. Apache Level CORS & Security Headers
 <IfModule mod_headers.c>
     # Dynamically match frontend origins
     SetEnvIfNoCase Origin "https?://(www\.)?loveofcalvary\.org$" CORS_ORIGIN=$0
@@ -24,5 +31,3 @@
     Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept, Origin"
     Header always set Access-Control-Allow-Credentials "true"
 </IfModule>
-
-
