@@ -1,0 +1,28 @@
+# Refact AI Assistant files (prevents temp file lock errors)
+.refact/
+*.tmp
+
+# Python byte-code / caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env.local
+.env.*.local
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+*.log
+
+# Editor directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
