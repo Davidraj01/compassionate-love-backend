@@ -20,8 +20,18 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-clm-calvary-mi
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 # Allowed Hosts (supports comma-separated list via environment variable)
-allowed_hosts_env = os.environ.get('DJANGO_ALLOWED_HOSTS', '*')
-ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()] if allowed_hosts_env != '*' else ['*']
+allowed_hosts_env = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = [
+        '*',
+        'loveofcalvary.org',
+        'www.loveofcalvary.org',
+        'api.loveofcalvary.org',
+        'localhost',
+        '127.0.0.1',
+    ]
 
 # Reverse proxy SSL header (Essential for Render, Railway, AWS, Heroku, Nginx HTTPS)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -132,18 +142,28 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CORS Configuration
+# CORS Configuration (Equivalent to cors() in Node.js Express)
 cors_allowed = os.environ.get('CORS_ALLOWED_ORIGINS', '')
 if cors_allowed:
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_allowed.split(',') if origin.strip()]
     CORS_ALLOW_ALL_ORIGINS = False
 else:
     CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOWED_ORIGINS = [
+        'https://www.loveofcalvary.org',
+        'https://loveofcalvary.org',
+        'https://api.loveofcalvary.org',
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:5173',
+    ]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^http://localhost:\d+$",
     r"^http://127.0.0.1:\d+$",
+    r"^https://.*\.loveofcalvary\.org$",
     r"^https://.*\.vercel\.app$",
     r"^https://.*\.netlify\.app$",
     r"^https://.*\.onrender\.com$",
@@ -160,6 +180,10 @@ else:
         'http://localhost:5173',
         'http://127.0.0.1:3000',
         'http://127.0.0.1:5173',
+        'https://www.loveofcalvary.org',
+        'https://loveofcalvary.org',
+        'https://api.loveofcalvary.org',
+        'https://*.loveofcalvary.org',
         'https://*.vercel.app',
         'https://*.netlify.app',
         'https://*.onrender.com',
