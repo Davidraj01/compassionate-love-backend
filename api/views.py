@@ -675,7 +675,7 @@ def admin_login_view(request):
     # 3. Live Server Resilience Fallback:
     # If standard auth failed, check against server environment's ADMIN_PASSWORD
     admin_env_user = os.environ.get("ADMIN_USERNAME", "admin").strip()
-    admin_env_pass = os.environ.get("ADMIN_PASSWORD", "david#321")
+    admin_env_pass = os.environ.get("ADMIN_PASSWORD", "david@321")
     admin_env_email = os.environ.get("ADMIN_EMAIL", "info@clm.org")
 
     if user is None:
