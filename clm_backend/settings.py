@@ -148,15 +148,15 @@ if cors_allowed:
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_allowed.split(',') if origin.strip()]
     CORS_ALLOW_ALL_ORIGINS = False
 else:
-    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_ALL_ORIGINS = False
     CORS_ALLOWED_ORIGINS = [
         'https://www.loveofcalvary.org',
         'https://loveofcalvary.org',
-        'https://api.loveofcalvary.org',
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'http://127.0.0.1:3000',
-        'http://127.0.0.1:5173',
+        # 'https://api.loveofcalvary.org',
+        # 'http://localhost:3000',
+        # 'http://localhost:5173',
+        # 'http://127.0.0.1:3000',
+        # 'http://127.0.0.1:5173',
     ]
 
 CORS_ALLOW_CREDENTIALS = True

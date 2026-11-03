@@ -694,7 +694,7 @@ def admin_login_view(request):
                 user = User.objects.create_superuser(
                     username=admin_env_user,
                     email=admin_env_email,
-                    password=admin_env_pass
+                    password=admin_env_pass,
                 )
 
     if user is not None:
