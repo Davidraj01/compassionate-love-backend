@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
         # 1. Create Default Admin User
         admin_username = os.environ.get("ADMIN_USERNAME", "admin")
-        admin_password = os.environ.get("ADMIN_PASSWORD", "clmAdmin#2026")
+        admin_password = os.environ.get("ADMIN_PASSWORD", "david#321")
         admin_email = os.environ.get("ADMIN_EMAIL", "info@clm.org")
 
         admin_user, created = User.objects.get_or_create(username=admin_username, defaults={'email': admin_email})
