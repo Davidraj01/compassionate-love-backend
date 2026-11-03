@@ -23,14 +23,15 @@ class Command(BaseCommand):
         admin_email = os.environ.get("ADMIN_EMAIL", "info@clm.org")
 
         admin_user, created = User.objects.get_or_create(username=admin_username, defaults={'email': admin_email})
+        admin_user.set_password(admin_password)
+        admin_user.is_staff = True
+        admin_user.is_superuser = True
+        admin_user.is_active = True
+        admin_user.save()
         if created:
-            admin_user.set_password(admin_password)
-            admin_user.is_staff = True
-            admin_user.is_superuser = True
-            admin_user.save()
             self.stdout.write(self.style.SUCCESS(f"Created admin user: {admin_username}"))
         else:
-            self.stdout.write(self.style.NOTICE(f"Admin user {admin_username} already exists."))
+            self.stdout.write(self.style.SUCCESS(f"Updated password and permissions for existing admin user: {admin_username}"))
 
         # 2. Homepage Content
         if not HomepageContent.objects.exists():

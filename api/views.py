@@ -661,7 +661,7 @@ def admin_login_view(request):
 
     if not username or not password:
         return Response(
-            {'error': 'Please provide both  and password.'},
+            {'error': 'Please provide both username and password.'},
             status=status.HTTP_400_BAD_REQUEST
         )
 
