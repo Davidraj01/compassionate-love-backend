@@ -1,6 +1,6 @@
 # Compassionate Love of Calvary Ministries - Apache Backend Configuration
 
-# 1. Enable Rewrite Engine
+# 1. Enable Rewrite Engine & Pass Authorization Header
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -8,22 +8,21 @@
     # Without this, Apache strips "Authorization: Token <key>" causing 401 Unauthorized
     RewriteCond %{HTTP:Authorization} ^(.*)
     RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
-
-    # Handle CORS OPTIONS Preflight Requests cleanly
-    RewriteCond %{REQUEST_METHOD} OPTIONS
-    RewriteRule ^(.*)$ $1 [R=200,L]
 </IfModule>
 
 # 2. Apache Level CORS & Security Headers
 <IfModule mod_headers.c>
-    # Dynamically allow your live frontend domains
-    SetEnvIf Origin "^https?://(www\.)?loveofcalvary\.org$" CORS_ORIGIN=$0
-    SetEnvIf Origin "^http://localhost(:\d+)?$" CORS_ORIGIN=$0
-    SetEnvIf Origin "^http://127\.0\.0\.1(:\d+)?$" CORS_ORIGIN=$0
+    # Dynamically match frontend origins
+    SetEnvIfNoCase Origin "https?://(www\.)?loveofcalvary\.org$" CORS_ORIGIN=$0
+    SetEnvIfNoCase Origin "https?://.*\.vercel\.app$" CORS_ORIGIN=$0
+    SetEnvIfNoCase Origin "http://(localhost|127\.0\.0\.1)(:\d+)?$" CORS_ORIGIN=$0
 
+    # Fallback to primary live domain if env is empty
     Header always set Access-Control-Allow-Origin "%{CORS_ORIGIN}e" env=CORS_ORIGIN
+    Header always set Access-Control-Allow-Origin "https://www.loveofcalvary.org" "expr=-z reqenv('CORS_ORIGIN')"
     Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
     Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept, Origin"
     Header always set Access-Control-Allow-Credentials "true"
 </IfModule>
+
 
