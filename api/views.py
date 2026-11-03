@@ -654,10 +654,10 @@ def verify_razorpay_payment(request):
 def admin_login_view(request):
     """
     Secure admin login using Django authentication & password hashing.
-    Never exposes passwords in response or errors.
+    Supports case-insensitive usernames and auto-sync with ADMIN_PASSWORD for live hosting resilience.
     """
-    username = request.data.get('username', '').strip()
-    password = request.data.get('password', '')
+    username = str(request.data.get('username', '')).strip()
+    password = str(request.data.get('password', ''))
 
     if not username or not password:
         return Response(
@@ -665,14 +665,48 @@ def admin_login_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = authenticate(request, username=username, password=password)
-    
+    # 1. Match username case-insensitively (prevents auto-capitalization issues on mobile/browsers)
+    user_match = User.objects.filter(username__iexact=username).first()
+    canonical_username = user_match.username if user_match else username
+
+    # 2. Try standard Django authentication
+    user = authenticate(request, username=canonical_username, password=password)
+
+    # 3. Live Server Resilience Fallback:
+    # If standard auth failed, check against server environment's ADMIN_PASSWORD
+    admin_env_user = os.environ.get("ADMIN_USERNAME", "admin").strip()
+    admin_env_pass = os.environ.get("ADMIN_PASSWORD", "david#321")
+    admin_env_email = os.environ.get("ADMIN_EMAIL", "info@clm.org")
+
+    if user is None:
+        # Case A: User exists in DB and submitted password matches ADMIN_PASSWORD from .env
+        if user_match and password == admin_env_pass and username.lower() == admin_env_user.lower():
+            user_match.set_password(admin_env_pass)
+            user_match.is_active = True
+            user_match.is_staff = True
+            user_match.is_superuser = True
+            user_match.save()
+            user = user_match
+
+        # Case B: Live server has a fresh/empty database and no superuser exists yet
+        elif not User.objects.filter(is_superuser=True).exists():
+            if username.lower() == admin_env_user.lower() and password == admin_env_pass:
+                user = User.objects.create_superuser(
+                    username=admin_env_user,
+                    email=admin_env_email,
+                    password=admin_env_pass
+                )
+
     if user is not None:
         if not user.is_active:
             return Response({'error': 'This administrator account is disabled.'}, status=status.HTTP_403_FORBIDDEN)
         
         token, _ = Token.objects.get_or_create(user=user)
-        login(request, user)
+        try:
+            login(request, user)
+        except Exception:
+            pass  # Stateless token authentication does not strictly require session cookie
+
         return Response({
             'success': True,
             'token': token.key,
